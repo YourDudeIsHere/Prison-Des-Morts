@@ -19,6 +19,7 @@ public class AI : MonoBehaviour
     public float grabCooldown = 5.0f; 
     //Prevents grabbing for a certain amount of time after grabbing once
     private float grabCooldownTimer;
+    private Rigidbody2D _rigidbody;
     
     public Player playerScript;
 
@@ -28,6 +29,8 @@ public class AI : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        _rigidbody = GetComponent<Rigidbody2D>();
+        
         // Initialize the coroutine reference
         _healthReductionCoroutine = null;
     }
@@ -51,8 +54,8 @@ public class AI : MonoBehaviour
         // If the distance between the AI and the player are less than 10, the AI will move towards the player. 
         if (distance < 10)
         {
-            transform.position = Vector2.MoveTowards(transform.position, player.transform.position, speed * Time.deltaTime);
             transform.rotation = Quaternion.Euler(Vector3.forward * angle);
+            _rigidbody.velocity = new Vector2( speed * direction.x, speed * direction.y);
         }
         print ("Grab State =" + IsGrabbed);
         if(IsGrabbed)
