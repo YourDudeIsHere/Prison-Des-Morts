@@ -16,7 +16,7 @@ public class UIManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        GrabScore = 20;
+        GrabScore = 10;
     }
 
     // Update is called once per frame
@@ -30,10 +30,10 @@ public class UIManager : MonoBehaviour
         if(ai.IsGrabbed == false)
         {
             panel.SetActive(false);
-            GrabScore = 20;
+            GrabScore = 10;
         }
 
-       
+        // When E is pressed, take one away from the current grab score
         if(panel.activeSelf)
         {
             HandleButtonSize();
