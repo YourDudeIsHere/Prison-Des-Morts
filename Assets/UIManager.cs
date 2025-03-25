@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 using UnityEngine.UIElements;
 using Image = UnityEngine.UI.Image;
@@ -10,13 +11,13 @@ public class UIManager : MonoBehaviour
 {
     public GameObject panel;
     public AI ai;
-    public Image GrabButton;
+   public Image grabButton;
 
-    public float GrabScore;
+    public float grabScore;
     // Start is called before the first frame update
     void Start()
     {
-        GrabScore = 10;
+        grabScore = 10;
     }
 
     // Update is called once per frame
@@ -30,7 +31,7 @@ public class UIManager : MonoBehaviour
         if(ai.IsGrabbed == false)
         {
             panel.SetActive(false);
-            GrabScore = 10;
+            grabScore = 10;
         }
 
         // When E is pressed, take one away from the current grab score
@@ -39,10 +40,10 @@ public class UIManager : MonoBehaviour
             HandleButtonSize();
             if (Input.GetKeyDown(KeyCode.E))
             {
-                GrabScore -= 1;
+                grabScore -= 1;
             }
         }
-        if(GrabScore == 0)
+        if(grabScore == 0)
         {
             ai.IsGrabbed = false;
         }
@@ -51,11 +52,11 @@ public class UIManager : MonoBehaviour
         {
             if (Input.GetKeyDown(KeyCode.E))
             {
-                GrabButton.transform.localScale = new Vector2(0.95f, 0.95f);
+                grabButton.transform.localScale = new Vector2(0.95f, 0.95f);
             }
             if (Input.GetKeyUp(KeyCode.E))
             {
-                GrabButton.transform.localScale = new Vector2(1f, 1f);
+                grabButton.transform.localScale = new Vector2(1f, 1f);
             }
         }
     }

@@ -1,7 +1,5 @@
 
 using System.Collections;
-using System.Net.Mime;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 

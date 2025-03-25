@@ -1,6 +1,8 @@
 
+using System.Collections;
 using UnityEngine;
 using UnityEngine.Serialization;
+
 
 public class Player : MonoBehaviour
 {
@@ -9,8 +11,10 @@ public class Player : MonoBehaviour
     private float _directionVertical = 0f;
     private Rigidbody2D _rigidbody;
     public AI ai;
-    public bool EnableInput = true;
+    public bool enableInput = true;
     public float playerHealth;
+    public float AI_Speed_Recharge;
+    public GameObject ShoveZone;
 
     // Start is called before the first frame update
     void Start()
@@ -27,7 +31,7 @@ public class Player : MonoBehaviour
         print(playerHealth);
         if (ai.IsGrabbed)
         {
-            EnableInput = false;
+            enableInput = false;
             speed = 0;
             _directionHorizontal = 0;
             _directionVertical = 0;
@@ -36,10 +40,10 @@ public class Player : MonoBehaviour
 
         if (ai.IsGrabbed == false)
         {
-            EnableInput = true;
+            enableInput = true;
             speed = 8.5f;
 
-            if (EnableInput)
+            if (enableInput)
             {
                 // Horizontal Movement
                 this._directionHorizontal = Input.GetAxis("Horizontal");
@@ -71,13 +75,39 @@ public class Player : MonoBehaviour
                 {
                     _rigidbody.velocity = new Vector2(_rigidbody.velocity.x, 0);
                 }
+                if (Input.GetKeyDown(KeyCode.X))
+                {
+                    ShoveZone.SetActive(true);
+                    StartCoroutine(DisableAfterDelay());
+                }
             }
+            
+         
 
 
 
 
 
+        }
+    }
+    private IEnumerator DisableAfterDelay()
+    {
+        yield return new WaitForSeconds(0.5f);
+        ShoveZone.SetActive(false);
+    }
 
+    private Coroutine _stunTime;
+    
+    private IEnumerator ShoveTime()
+    {
+        ai.speed += 1;
+        AI_Speed_Recharge += 1;
+        yield return new WaitForSeconds(1f);
+        
+        if (AI_Speed_Recharge == 4)
+        {
+            StopCoroutine(_stunTime);
+            _stunTime = null;
         }
     }
 }
