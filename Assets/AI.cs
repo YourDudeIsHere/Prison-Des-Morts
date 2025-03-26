@@ -56,14 +56,23 @@ public class AI : MonoBehaviour
             distance = Vector2.Distance(transform.position, player.transform.position);
             Vector2 direction = player.transform.position - transform.position; 
             direction.Normalize();
-            float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+            
+           // float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
             //Turns Placeholder square to players position, may not need for game
         
             // If the distance between the AI and the player are less than 10, the AI will move towards the player. 
-            if (distance < 10)
+            if (distance < 15)
             {
-                transform.rotation = Quaternion.Euler(Vector3.forward * angle);
+                //transform.rotation = Quaternion.Euler(Vector3.forward * angle);
                 _rigidbody.velocity = new Vector2( speed * direction.x, speed * direction.y);
+                if (canMove)
+                {
+                    // Calculate the angle and snap to the nearest 90 degrees
+                    float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+                    angle = Mathf.Round(angle / 90) * 90;
+                    transform.rotation = Quaternion.Euler(0, 0, angle);
+                } 
+                
             }
         } 
         print ("Grab State =" + IsGrabbed);

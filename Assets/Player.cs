@@ -1,5 +1,6 @@
 
 using System.Collections;
+
 using UnityEngine;
 
 
@@ -104,11 +105,16 @@ public class Player : MonoBehaviour
 
 
         }
+       
     }
+    //Used to shortly activate the shove before disabling it again
     private IEnumerator DisableAfterDelay()
     {
+        //Activates the shove zone for 0.5 seconds
         yield return new WaitForSeconds(0.5f);
+        //Disables the shove zone
         ShoveZone.SetActive(false);
+        //Shove goes on a 3-second cooldown
         ShoveCooldown = 3f; //Adjust this for the cooldown time of shoving!
         //Starts the cooldown timer for shoving
         _shoveCooldown ??= StartCoroutine(ShoveCooldownTime());
@@ -119,6 +125,7 @@ public class Player : MonoBehaviour
     //Used to detect when the AI is in the shove zone and to stop the AI from moving
     private void OnTriggerEnter2D(Collider2D other)
     {
+        //Checks if the object that entered the collider is an AI
         if (other.CompareTag("AI"))
         {
             Debug.Log("AI entered the collider");
@@ -145,14 +152,17 @@ public class Player : MonoBehaviour
         }
     }
     
-    //Used to gradually push the AI to its original speed after being shoved
+    //Used for timing until the AI can move again after being shoved
     private IEnumerator ShoveTime(AI ai)
     {
         AI_Speed_Recharge = 15f;
         while (AI_Speed_Recharge > 0f)
         {
+            //Forces the AI to stand still
             ai.canMove = false;
+            //Reduces 1 from the AI speed recharge every 0.1 seconds
             AI_Speed_Recharge -= 1f;
+            print($"AI SPEED RECHARGE IS = {ShoveCooldown}");
             yield return new WaitForSeconds(0.1f);
         }
         
@@ -161,7 +171,7 @@ public class Player : MonoBehaviour
         _stunTime = null;
        
     }
-
+    // Used for the cooldown timer of shoving. Counts down from 3 seconds to 0.
     private IEnumerator ShoveCooldownTime()
     {
         
