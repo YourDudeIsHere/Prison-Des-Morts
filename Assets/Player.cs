@@ -1,24 +1,26 @@
 
 using System.Collections;
 using UnityEngine;
-using UnityEngine.Serialization;
+
 
 
 public class Player : MonoBehaviour
 {
-    public float speed = 8.5f;
-    private float _directionHorizontal = 0f;
-    private float _directionVertical = 0f;
+    public float speed = 8f;
+    private float _directionHorizontal;
+    private float _directionVertical;
     private Rigidbody2D _rigidbody;
     public AI ai;
     public bool enableInput = true;
     public float playerHealth;
-    public float AI_Speed_Recharge;
+    private float AI_Speed_Recharge = 15f;
     public GameObject ShoveZone;
+    public float ShoveCooldown;
 
     // Start is called before the first frame update
     void Start()
     {
+        ShoveZone.SetActive(false);
         playerHealth = 100f;
         //rb = RigidBody
         _rigidbody = GetComponent<Rigidbody2D>();
@@ -28,7 +30,7 @@ public class Player : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        print(playerHealth);
+        
         if (ai.IsGrabbed)
         {
             enableInput = false;
@@ -50,11 +52,13 @@ public class Player : MonoBehaviour
                 if (this._directionHorizontal > 0f)
                 {
                     _rigidbody.velocity = new Vector2(_directionHorizontal * speed, _rigidbody.velocity.x);
+                    transform.rotation = Quaternion.Euler(0, 0, -90); // Face right
                 }
 
                 else if (_directionHorizontal < 0f)
                 {
                     _rigidbody.velocity = new Vector2(_directionHorizontal * speed, _rigidbody.velocity.x);
+                    transform.rotation = Quaternion.Euler(0, 0, 90); // Face left
                 }
                 else
                 {
@@ -66,19 +70,30 @@ public class Player : MonoBehaviour
                 if (_directionVertical > 0f)
                 {
                     _rigidbody.velocity = new Vector2(_rigidbody.velocity.x, _directionVertical * speed);
+                    transform.rotation = Quaternion.Euler(0, 0, 0); // Face up
                 }
                 else if (_directionVertical < 0f)
                 {
                     _rigidbody.velocity = new Vector2(_rigidbody.velocity.x, _directionVertical * speed);
+                    transform.rotation = Quaternion.Euler(0, 0, 180); // Face down
                 }
                 else
                 {
                     _rigidbody.velocity = new Vector2(_rigidbody.velocity.x, 0);
                 }
-                if (Input.GetKeyDown(KeyCode.X))
+
+                print($"THE COOLDOWN FOR SHOVING IS = {ShoveCooldown}");
+                if (Input.GetKeyDown(KeyCode.F))
                 {
-                    ShoveZone.SetActive(true);
-                    StartCoroutine(DisableAfterDelay());
+                    //If the AI is not grabbed and the cooldown is 0, the shove zone will be activated.
+                    if (ai.IsGrabbed == false && ShoveCooldown == 0)
+                    {
+                        ShoveZone.SetActive(true);
+                        //Forces AI to not grab after being shoved
+                        ai.grabCooldown = ShoveCooldown;
+                        ai.IsGrabbed = false;
+                        StartCoroutine(DisableAfterDelay());
+                    }
                 }
             }
             
@@ -94,20 +109,71 @@ public class Player : MonoBehaviour
     {
         yield return new WaitForSeconds(0.5f);
         ShoveZone.SetActive(false);
+        ShoveCooldown = 3f; //Adjust this for the cooldown time of shoving!
+        //Starts the cooldown timer for shoving
+        _shoveCooldown ??= StartCoroutine(ShoveCooldownTime());
     }
 
     private Coroutine _stunTime;
-    
-    private IEnumerator ShoveTime()
+    private Coroutine _shoveCooldown;
+    //Used to detect when the AI is in the shove zone and to stop the AI from moving
+    private void OnTriggerEnter2D(Collider2D other)
     {
-        ai.speed += 1;
-        AI_Speed_Recharge += 1;
-        yield return new WaitForSeconds(1f);
-        
-        if (AI_Speed_Recharge == 4)
+        if (other.CompareTag("AI"))
         {
-            StopCoroutine(_stunTime);
-            _stunTime = null;
+            Debug.Log("AI entered the collider");
+            AI ai = other.GetComponent<AI>();
+            if (ai != null)
+            {
+                ai.canMove = false;
+                Debug.Log("AI speed set to 0");
+                if (_stunTime != null)
+                {
+                    StopCoroutine(_stunTime);
+                    _stunTime = null;
+                }
+                _stunTime = StartCoroutine(ShoveTime(ai));
+            }
+            else
+            {
+                Debug.Log("AI component not found on the object");
+            }
+        }
+        else
+        {
+            Debug.Log("Non-AI object entered the collider");
+        }
+    }
+    
+    //Used to gradually push the AI to its original speed after being shoved
+    private IEnumerator ShoveTime(AI ai)
+    {
+        AI_Speed_Recharge = 15f;
+        while (AI_Speed_Recharge > 0f)
+        {
+            ai.canMove = false;
+            AI_Speed_Recharge -= 1f;
+            yield return new WaitForSeconds(0.1f);
+        }
+        
+        print("AI speed is back to normal");
+        ai.ResetMovement();
+        _stunTime = null;
+       
+    }
+
+    private IEnumerator ShoveCooldownTime()
+    {
+        
+        while (ShoveCooldown > 0)
+        {
+            ShoveCooldown -= 1;
+            yield return new WaitForSeconds(1f); 
+        }
+        if (ShoveCooldown == 0)
+        {
+            StopCoroutine(_shoveCooldown);
+            _shoveCooldown = null;
         }
     }
 }

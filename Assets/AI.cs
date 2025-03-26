@@ -8,7 +8,7 @@ public class AI : MonoBehaviour
     // This is the player object that the AI will follow.
     public GameObject player;
     // This is the speed at which the AI will move.
-    public float speed = 8.5f;
+    public float speed = 8f;
     // This is the distance between the AI and the player.
     private float distance;
     //To Decide if the player is grabbed or not
@@ -22,6 +22,8 @@ public class AI : MonoBehaviour
     public Player playerScript;
 
     public Image healthVignette;
+
+    public bool canMove = true;
     
     
     // Start is called before the first frame update
@@ -42,19 +44,28 @@ public class AI : MonoBehaviour
         {
             grabCooldownTimer -= Time.deltaTime;
         }
-        // Calculates the distance between the AI and the player, then moves the AI towards the player.
-        distance = Vector2.Distance(transform.position, player.transform.position);
-        Vector2 direction = player.transform.position - transform.position; 
-        direction.Normalize();
-        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-        //Turns Placeholder square to players position, may not need for game
         
-        // If the distance between the AI and the player are less than 10, the AI will move towards the player. 
-        if (distance < 10)
+        if (!canMove)
         {
-            transform.rotation = Quaternion.Euler(Vector3.forward * angle);
-            _rigidbody.velocity = new Vector2( speed * direction.x, speed * direction.y);
+            _rigidbody.velocity = Vector2.zero;
+            return;
         }
+        if(canMove)
+        {
+            // Calculates the distance between the AI and the player, then moves the AI towards the player.
+            distance = Vector2.Distance(transform.position, player.transform.position);
+            Vector2 direction = player.transform.position - transform.position; 
+            direction.Normalize();
+            float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+            //Turns Placeholder square to players position, may not need for game
+        
+            // If the distance between the AI and the player are less than 10, the AI will move towards the player. 
+            if (distance < 10)
+            {
+                transform.rotation = Quaternion.Euler(Vector3.forward * angle);
+                _rigidbody.velocity = new Vector2( speed * direction.x, speed * direction.y);
+            }
+        } 
         print ("Grab State =" + IsGrabbed);
         if(IsGrabbed)
         {
@@ -82,6 +93,7 @@ public class AI : MonoBehaviour
     // This function is called when the AI is released by the player.
     public void Release()
     {
+        canMove = true;
         IsGrabbed = false;
         //Checks for the coroutine and stops it if it is running
         if (_healthReductionCoroutine != null)
@@ -115,6 +127,10 @@ public class AI : MonoBehaviour
             healthVignette.color = color;
             print ("Health Vignette Alpha = " + color.a);
         }
+    }
+    public void ResetMovement()
+    {
+        canMove = true;
     }
     
   
