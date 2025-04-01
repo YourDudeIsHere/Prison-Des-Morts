@@ -7,6 +7,7 @@ public class AI : MonoBehaviour
 {
     // This is the player object that the AI will follow.
     public GameObject player;
+    public UIManager uiManager;
     // This is the speed at which the AI will move.
     public float speed = 8f;
     // This is the distance between the AI and the player.
