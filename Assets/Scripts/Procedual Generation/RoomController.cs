@@ -33,7 +33,9 @@ public class RoomController : MonoBehaviour
 
     public void Start()
     {
-        
+        LoadRoom("StartRoom", 0, 0);
+        LoadRoom("Empty", 1, 0);
+        LoadRoom("Empty", 2, 0);
     }
 
     public void Update()
@@ -72,7 +74,7 @@ public class RoomController : MonoBehaviour
         
         if (!isLoadingRoom)
         {
-            StartCoroutine(LoadRoomCoroutine());
+            StartCoroutine(LoadRoomCoroutine(loadRoomQueue.Dequeue()));
         }
     }
 
@@ -88,16 +90,17 @@ public class RoomController : MonoBehaviour
         }
     }
     
-    public void registerRoom(Room room)
+    public void RegisterRoom(Room room)
     {
         room.transform.position = new Vector3(
-            currentLoadRoomData.X * room.Width,
-            currentLoadRoomData.Y * room.Height,
-            0);
+            currentLoadRoomData[0].X * room.Width,
+            currentLoadRoomData[0].Y * room.Height,
+            0
+            );
 
-        room.X = currentLoadRoomData.X;
-        room.Y = currentLoadRoomData.Y;
-        room.name = CurrentWorldName+ "-" + currentLoadRoomData.name +" " + room.X + "," + room.Y;
+        room.X = currentLoadRoomData[0].X;
+        room.Y = currentLoadRoomData[0].Y;
+        room.name = CurrentWorldName+ "-" + currentLoadRoomData[0].name +" " + room.X + "," + room.Y;
         room.transform.parent = transform;
 
         isLoadingRoom = false;
