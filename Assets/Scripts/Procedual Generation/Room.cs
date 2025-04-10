@@ -6,12 +6,12 @@ using UnityEngine;
 public class Room : MonoBehaviour
 {
 
-    public int Width;
+    public int Width = 20;
     
-    public int Height;
+    public int Height = 10;
 
     public int X;
-    
+
     public int Y;
     // Start is called before the first frame update
     void Start()
@@ -21,6 +21,8 @@ public class Room : MonoBehaviour
             Debug.LogError("Wrong scene to press play in.");
             return;
         }
+        
+        RoomController.instance.RegisterRoom(this);
     }
 
     private void OnDrawGizmos()
