@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -21,6 +22,8 @@ public class RoomController : MonoBehaviour
     private string CurrentWorldName = "Prison";
 
     private RoomInfo currentLoadRoomData;
+    
+    Room currentRoom;
 
     Queue<RoomInfo> loadRoomQueue = new Queue<RoomInfo>();
 
@@ -35,9 +38,7 @@ public class RoomController : MonoBehaviour
 
     private void Start()
     {
-        LoadRoom("Start", 0, 0);
-        LoadRoom("Empty", 0, -1); 
-        LoadRoom("Empty", 1, 0); 
+        
 
     }
 
@@ -102,6 +103,11 @@ public class RoomController : MonoBehaviour
 
         isLoadingRoom = false;
         
+        if(loadedRooms.Count == 0)
+        {
+            CameraController.instance.currentRoom = room;
+        }
+        
         loadedRooms.Add(room);
     }
     
@@ -116,5 +122,16 @@ public class RoomController : MonoBehaviour
         }
 
         return false;
+    }
+    
+    public void OnPlayerEnterRoom(Room room)
+    {
+        if (room == null)
+        {
+            return;
+        }
+        
+        CameraController.instance.currentRoom = room;
+        currentRoom = room;
     }
 }
