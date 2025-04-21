@@ -442,8 +442,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 349df64afe101d24ca161ea9d99ab765, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ai: {fileID: 1729585753}
+  player: {fileID: 869233391}
   currentRoom: {fileID: 0}
   moveSpeedWhenRoomChange: 100
+  zoomSpeed: 1
+  defaultZoom: 7
+  grabZoom: 3
 --- !u!1 &575984955
 GameObject:
   m_ObjectHideFlags: 0
@@ -751,6 +756,11 @@ MonoBehaviour:
   Height: 10
   X: 0
   Y: 0
+  leftDoor: {fileID: 0}
+  rightDoor: {fileID: 0}
+  bottomDoor: {fileID: 0}
+  topDoor: {fileID: 0}
+  doors: []
 --- !u!114 &796547193
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1346,7 +1356,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   panel: {fileID: 1710678801}
-  ai: {fileID: 0}
+  ai: {fileID: 1729585753}
   grabButton: {fileID: 2125714310}
   grabScore: 0
 --- !u!1001 &7947238932950420477
