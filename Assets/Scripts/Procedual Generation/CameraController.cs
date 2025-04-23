@@ -1,6 +1,3 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class CameraController : MonoBehaviour
@@ -11,6 +8,7 @@ public class CameraController : MonoBehaviour
     public Room currentRoom;
     
     public float moveSpeedWhenRoomChange;
+    
     public float zoomSpeed = 1f; // Speed of zooming
     public float defaultZoom = 7f; // Default zoom level
     public float grabZoom = 3f; // Zoom level when the player is grabbed
@@ -30,6 +28,7 @@ public class CameraController : MonoBehaviour
     void Update()
     {
         UpdatePosition();
+        //Method that is used to zoom in when the player is grabbed
         UpdateZoom();
     }
 
@@ -49,17 +48,17 @@ public class CameraController : MonoBehaviour
   {
       if (ai.IsGrabbed)
       {
-          // Smoothly interpolate the camera's zoom level towards the grab zoom level
+          // Smoothly increases the camera's zoom level towards the grab zoom level
           targetZoom = grabZoom;
-          
-  
+          //The focus of the camera is set to the camera's position 
           Vector3 targetPosition = player.transform.position;
           targetPosition.z = transform.position.z; // Keep the camera's Z position unchanged
-          transform.position = targetPosition;
-          transform.position = Vector3.Lerp(transform.position, targetPosition, Time.deltaTime * zoomSpeed);
+          transform.position = targetPosition; //Puts the transform of the camera to the player 
+          transform.position = Vector3.Lerp(transform.position, targetPosition, Time.deltaTime * zoomSpeed); //Uses a timer to slowly zoom into the player
       }
       else
       {
+          //Method used to keep the camera
           ResetCaneraZoom();
       }
   

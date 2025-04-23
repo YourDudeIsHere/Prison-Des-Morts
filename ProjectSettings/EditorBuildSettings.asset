@@ -17,4 +17,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/PrisonRooms/PrisonEnd.unity
     guid: 8286bff830564cd45804592ef5edcec0
+  - enabled: 1
+    path: Assets/Scenes/PrisonRooms/PrisonTimedEnd.unity
+    guid: 92d5236aed2148a40bea2c11d852eee8
   m_configObjects: {}

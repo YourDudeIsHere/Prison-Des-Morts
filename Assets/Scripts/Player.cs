@@ -31,7 +31,7 @@ public class Player : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        //Disables
         if (ai.IsGrabbed)
         {
             enableInput = false;
