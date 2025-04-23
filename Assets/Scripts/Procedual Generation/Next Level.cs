@@ -1,16 +1,21 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
+
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class NextLevel : MonoBehaviour
 {
-    private void OnTriggerEnter(Collider other)
+    public int BasementLevel = 3;
+    private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.CompareTag("Player"))
+        if (other.CompareTag("Hatch"))
         {
-            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+            SceneManager.LoadScene("PrisonMain");
+            BasementLevel -= 1;
+        }
+        // Placeholder for final level
+        if (BasementLevel == 0)
+        {
+            SceneManager.LoadScene("PrisonTimedEnd");
         }
     }
 }

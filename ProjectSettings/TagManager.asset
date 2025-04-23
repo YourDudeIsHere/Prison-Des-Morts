@@ -6,6 +6,7 @@ TagManager:
   tags:
   - AI
   - GrabZone
+  - Hatch
   layers:
   - Default
   - TransparentFX
