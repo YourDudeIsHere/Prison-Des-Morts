@@ -1,14 +1,13 @@
 
+
 using System;
 using System.Collections;
-using UnityEditor;
 using UnityEngine;
 
 
 
 public class Player : MonoBehaviour
 {
-    public ItemObject item;
     public float speed = 8f;
     private float _directionHorizontal;
     private float _directionVertical;
@@ -23,6 +22,7 @@ public class Player : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        
         ShoveZone.SetActive(false);
         playerHealth = 100f;
         //rb = RigidBody
@@ -124,22 +124,8 @@ public class Player : MonoBehaviour
         _shoveCooldown ??= StartCoroutine(ShoveCooldownTime());
     }
 
-    public void OnTriggerStay(Collider other)
-    {
-        if (Input.GetKeyDown(KeyCode.E) && other.CompareTag("Item"))
-        {
-            //AI Generated Snippet 
-            if (item != null)
-            {
-                //item.HandlePickupItem();
-            }
-            else
-            {
-                Debug.LogError("Item is null.");
-            }
-            //End of AI Generated Snippet
-        }
-    }
+    
+    
 
     private Coroutine _stunTime;
     private Coroutine _shoveCooldown;
@@ -171,8 +157,25 @@ public class Player : MonoBehaviour
         {
             Debug.Log("Non-AI object entered the collider");
         }
+        
+        if (other.gameObject.CompareTag("Item"))
+        {
+            
+            Debug.Log("Player has entered the item collider");
+            //AI Generated Snippet 
+            if (other.gameObject != null)
+            {
+                other.gameObject.GetComponent<ItemObject>().OnHandlePickupItem();
+            }
+            else
+            {
+                Debug.LogError("Item is null.");
+            }
+            //End of AI Generated Snippet
+        }
+       
     }
-    
+
     //Used for timing until the AI can move again after being shoved
     private IEnumerator ShoveTime(AI ai)
     {

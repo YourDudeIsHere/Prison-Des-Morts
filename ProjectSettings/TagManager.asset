@@ -7,6 +7,7 @@ TagManager:
   - AI
   - GrabZone
   - Hatch
+  - Item
   layers:
   - Default
   - TransparentFX

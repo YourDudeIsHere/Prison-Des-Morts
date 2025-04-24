@@ -53,7 +53,7 @@ public class InventorySystem : MonoBehaviour
         m_itemDictionary = new Dictionary<InventoryItemData, InventoryItem>();
     }
 
-    public void add(InventoryItemData referenceData)
+    public void Add(InventoryItemData referenceData)
     {
         if(m_itemDictionary.TryGetValue(referenceData, out InventoryItem value))
         {
