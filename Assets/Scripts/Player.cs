@@ -1,12 +1,13 @@
 
 using System.Collections;
-
+using UnityEditor;
 using UnityEngine;
 
 
 
 public class Player : MonoBehaviour
 {
+    public ItemObject item;
     public float speed = 8f;
     private float _directionHorizontal;
     private float _directionVertical;
@@ -104,6 +105,11 @@ public class Player : MonoBehaviour
 
 
 
+        }
+
+        if (Input.GetKeyDown(KeyCode.E))
+        {
+            item.OnHandlePickupItem();
         }
        
     }
