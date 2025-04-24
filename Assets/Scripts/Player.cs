@@ -1,4 +1,5 @@
 
+using System;
 using System.Collections;
 using UnityEditor;
 using UnityEngine;
@@ -106,11 +107,8 @@ public class Player : MonoBehaviour
 
 
         }
-
-        if (Input.GetKeyDown(KeyCode.E))
-        {
-            item.OnHandlePickupItem();
-        }
+        
+      
        
     }
     //Used to shortly activate the shove before disabling it again
@@ -124,6 +122,23 @@ public class Player : MonoBehaviour
         ShoveCooldown = 3f; //Adjust this for the cooldown time of shoving!
         //Starts the cooldown timer for shoving
         _shoveCooldown ??= StartCoroutine(ShoveCooldownTime());
+    }
+
+    public void OnTriggerStay(Collider other)
+    {
+        if (Input.GetKeyDown(KeyCode.E) && other.CompareTag("Item"))
+        {
+            //AI Generated Snippet 
+            if (item != null)
+            {
+                //item.HandlePickupItem();
+            }
+            else
+            {
+                Debug.LogError("Item is null.");
+            }
+            //End of AI Generated Snippet
+        }
     }
 
     private Coroutine _stunTime;

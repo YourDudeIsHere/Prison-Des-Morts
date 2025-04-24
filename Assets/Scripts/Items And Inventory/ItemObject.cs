@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class ItemObject : MonoBehaviour
@@ -10,5 +8,6 @@ public class ItemObject : MonoBehaviour
     {
         InventorySystem.current.add(referenceItem);
         Destroy(gameObject);
+        Debug.Log("Picked up item");
     }
 }
