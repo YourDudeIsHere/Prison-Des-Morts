@@ -8,6 +8,7 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
+    public Weapon Weapon;
     public float speed = 8f;
     private float _directionHorizontal;
     private float _directionVertical;
@@ -91,11 +92,14 @@ public class Player : MonoBehaviour
                     //If the AI is not grabbed and the cooldown is 0, the shove zone will be activated.
                     if (ai.IsGrabbed == false && ShoveCooldown == 0)
                     {
-                        ShoveZone.SetActive(true);
-                        //Forces AI to not grab after being shoved
-                        ai.grabCooldown = ShoveCooldown;
-                        ai.IsGrabbed = false;
-                        StartCoroutine(DisableAfterDelay());
+                        if (Weapon.AbleToShove)
+                        {
+                            ShoveZone.SetActive(true);
+                            //Forces AI to not grab after being shoved
+                            ai.grabCooldown = ShoveCooldown;
+                            ai.IsGrabbed = false;
+                            StartCoroutine(DisableAfterDelay());
+                        }
                     }
                 }
             }
@@ -119,9 +123,10 @@ public class Player : MonoBehaviour
         //Disables the shove zone
         ShoveZone.SetActive(false);
         //Shove goes on a 3-second cooldown
-        ShoveCooldown = 3f; //Adjust this for the cooldown time of shoving!
+        ShoveCooldown = 0f; //Adjust this for the cooldown time of shoving!
         //Starts the cooldown timer for shoving
-        _shoveCooldown ??= StartCoroutine(ShoveCooldownTime());
+        
+
     }
 
     
@@ -196,15 +201,9 @@ public class Player : MonoBehaviour
        
     }
     // Used for the cooldown timer of shoving. Counts down from 3 seconds to 0.
-    private IEnumerator ShoveCooldownTime()
+    public void ShoveCooldownTime()
     {
-        
-        while (ShoveCooldown > 0)
-        {
-            ShoveCooldown -= 1;
-            yield return new WaitForSeconds(1f); 
-        }
-        if (ShoveCooldown == 0)
+        if (Weapon.AbleToShove)
         {
             StopCoroutine(_shoveCooldown);
             _shoveCooldown = null;

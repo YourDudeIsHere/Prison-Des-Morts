@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using System.Linq;
 
 public class RoomInfo
 {
@@ -30,10 +31,15 @@ public class RoomController : MonoBehaviour
     public List<Room> loadedRooms = new List<Room>();
 
     bool isLoadingRoom = false;
+    bool SpawnedEndRoom = false;
+    private bool UpdatedRooms = false;
 
     private void Awake()
     {
-        instance = this;
+        if (instance == null)
+        {
+            instance = this;
+        }
     }
 
  
@@ -52,12 +58,53 @@ public class RoomController : MonoBehaviour
         
         if(loadRoomQueue.Count == 0)
         {
+            if (!SpawnedEndRoom)
+            {
+                StartCoroutine(SpawnEndRoom());
+            } 
+            else if (SpawnedEndRoom && !UpdatedRooms)
+            {
+                foreach (Room room in loadedRooms)
+                {
+                   room.RemoveUnconnectedDoors();
+                }
+
+                UpdatedRooms = true;
+            }
             return;
         }
+        
         currentLoadRoomData = loadRoomQueue.Dequeue();
         isLoadingRoom = true;
         
         StartCoroutine(LoadRoomRoutine(currentLoadRoomData));
+    }
+
+    IEnumerator SpawnEndRoom()
+    {
+        SpawnedEndRoom = true;
+        yield return new WaitForSeconds(0.5f);
+
+        if (loadRoomQueue.Count == 0)
+        {
+            Room endRoom = loadedRooms[loadedRooms.Count - 1];
+            Room tempRoom = new Room(endRoom.X, endRoom.Y);
+            Destroy(endRoom.gameObject);
+
+            var roomToRemove = loadedRooms.Single(r => r.X == tempRoom.X && r.Y == tempRoom.Y);
+            loadedRooms.Remove(roomToRemove);
+
+            LoadRoom("End", tempRoom.X, tempRoom.Y);
+
+            // Wait for the end room to be fully loaded
+            yield return new WaitUntil(() => DoesRoomExist(tempRoom.X, tempRoom.Y));
+
+            Room newEndRoom = FindRoom(tempRoom.X, tempRoom.Y);
+            if (newEndRoom != null)
+            {
+                newEndRoom.RemoveUnconnectedDoors();
+            }
+        }
     }
 
     public void LoadRoom(string name, int x, int y)
@@ -109,7 +156,7 @@ public class RoomController : MonoBehaviour
             }
 
             loadedRooms.Add(room);
-            room.RemoveUnconnectedDoors();
+            
         }
         else
         {
@@ -120,6 +167,7 @@ public class RoomController : MonoBehaviour
     
     public bool DoesRoomExist( int x, int y)
     {
+        
         foreach (Room room in loadedRooms)
         {
             if (room.X == x && room.Y == y)

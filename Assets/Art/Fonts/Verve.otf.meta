@@ -1,0 +1,22 @@
+fileFormatVersion: 2
+guid: 152f998ddeba41944b6c3be97b3d7c90
+TrueTypeFontImporter:
+  externalObjects: {}
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontNames:
+  - Verve
+  fallbackFontReferences:
+  - {fileID: 12800000, guid: af3fb8664a0916d4dbf14635f8299e03, type: 3}
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  useLegacyBoundsCalculation: 0
+  shouldRoundAdvanceValue: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

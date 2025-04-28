@@ -5,6 +5,10 @@ using UnityEngine;
 
 public class Room : MonoBehaviour
 {
+    public GameObject wallLeft;
+    public GameObject wallRight;
+    public GameObject wallTop;
+    public GameObject wallBottom;
 
     public int Width = 20;
     
@@ -13,6 +17,14 @@ public class Room : MonoBehaviour
     public int X;
 
     public int Y;
+
+    private bool UpdatedDoors = false;
+
+    public Room(int X, int Y)
+    { 
+        this.X = X;
+        this.Y = Y;
+    }
     
     public Door leftDoor;
     public Door rightDoor;
@@ -28,6 +40,7 @@ public class Room : MonoBehaviour
             Debug.LogError("Wrong scene to press play in.");
             return;
         }
+        
         
         Door[] ds = GetComponentsInChildren<Door>();
         foreach (Door d in ds)
@@ -52,6 +65,15 @@ public class Room : MonoBehaviour
         
         RoomController.instance.RegisterRoom(this);
     }
+
+    void Update()
+    {
+       if(name.Contains("End") && !UpdatedDoors)
+       {
+           RemoveUnconnectedDoors();
+           UpdatedDoors = true;
+       }
+    }
     
     public void RemoveUnconnectedDoors()
     {
@@ -62,18 +84,26 @@ public class Room : MonoBehaviour
                 case Door.DoorType.right: 
                     if (GetRight() == null)
                         door.gameObject.SetActive(false);
+                    else 
+                    if (wallRight != null) wallRight.GetComponent<Collider2D>().enabled = false;
                     break;  
                 case Door.DoorType.left:
                     if (GetLeft() == null)
                         door.gameObject.SetActive(false);
+                    else
+                    if (wallLeft != null) wallLeft.GetComponent<Collider2D>().enabled = false;
                     break;
                 case Door.DoorType.bottom:
                     if (GetBottom() == null)
                         door.gameObject.SetActive(false);
+                    else
+                    if (wallBottom != null) wallBottom.GetComponent<Collider2D>().enabled = false;
                     break;
                 case Door.DoorType.top:
                     if (GetTop() == null)
                         door.gameObject.SetActive(false);
+                    else
+                    if (wallTop != null) wallTop.GetComponent<Collider2D>().enabled = false;
                     break;
             }
         }

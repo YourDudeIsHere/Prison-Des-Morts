@@ -5,6 +5,7 @@ using UnityEngine.UI;
 
 public class AI : MonoBehaviour
 {
+    public float AIhealth = 10f;
     // This is the player object that the AI will follow.
     public GameObject player;
     public UIManager uiManager;
@@ -40,6 +41,10 @@ public class AI : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (AIhealth <= 0)
+        {
+            Destroy(gameObject);
+        }
         // Update the cooldown timer
         if (grabCooldownTimer > 0)
         {

@@ -4,7 +4,9 @@ using UnityEngine;
 
 public class InventorySystem : MonoBehaviour
 {
+    public ItemSlots iSlots;
     public static InventorySystem current;
+    
     [Serializable]
     public class InventoryItem
     {
@@ -64,6 +66,7 @@ public class InventorySystem : MonoBehaviour
             InventoryItem newItem = new InventoryItem(referenceData);
             inventory.Add(newItem);
             m_itemDictionary.Add(referenceData, newItem);
+            iSlots.Set(newItem);
         }
     }
 
@@ -81,4 +84,7 @@ public class InventorySystem : MonoBehaviour
         }
         
     }
+    
+
+    
 }
