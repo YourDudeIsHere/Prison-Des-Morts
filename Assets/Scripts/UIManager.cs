@@ -25,11 +25,11 @@ public class UIManager : MonoBehaviour
     void Update()
     {
     
-        if(ai.IsGrabbed)
+        if(ai.IsGrabbing)
         {
             panel.SetActive(true);
         }
-        if(ai.IsGrabbed == false)
+        if(ai.IsGrabbing == false)
         {
             panel.SetActive(false);
             grabScore = 10;
@@ -46,7 +46,7 @@ public class UIManager : MonoBehaviour
         }
         if(grabScore == 0)
         {
-            ai.IsGrabbed = false;
+            ai.IsGrabbing = false;
         }
         //Function used to shrink and rezise the button when E is pressed. Used for better visual feedback.
         void HandleButtonSize()

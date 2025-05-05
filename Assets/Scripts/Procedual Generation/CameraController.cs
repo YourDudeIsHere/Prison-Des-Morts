@@ -46,7 +46,7 @@ public class CameraController : MonoBehaviour
     
   void UpdateZoom()
   {
-      if (ai.IsGrabbed)
+      if (ai.IsGrabbing)
       {
           // Smoothly increases the camera's zoom level towards the grab zoom level
           targetZoom = grabZoom;

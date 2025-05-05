@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class Weapon : MonoBehaviour
 {
@@ -9,51 +10,71 @@ public class Weapon : MonoBehaviour
     public bool AxeDamage;
     public AI ai;
     Animator animator;
-    // Start is called before the first frame update
+
+    private PlayerControls controls;
+
+    private HashSet<Collider2D> hitEnemies = new HashSet<Collider2D>();
+
+    private void Awake()
+    {
+        controls = new PlayerControls();
+
+        // Bind inputs
+        controls.Gameplay.Shove.performed += ctx => TryShove();
+        controls.Gameplay.Swing.performed += ctx => TrySwing();
+    }
+
     void Start()
     {
         animator = GetComponent<Animator>();
     }
 
-    // Update is called once per frame
-    void Update()
+    void OnEnable()
     {
-        if(Input.GetKeyDown(KeyCode.F) && !ai.IsGrabbed)
+        controls.Gameplay.Enable();
+    }
+
+    void OnDisable()
+    {
+        controls.Gameplay.Disable();
+    }
+
+    private void TryShove()
+    {
+        if (!ai.IsGrabbing && AbleToShove)
         {
             animator.SetTrigger("AxeShove");
             Debug.Log("Axe Shove is true");
         }
-        
-        if (Input.GetKeyDown(KeyCode.Mouse0) && canSwing)
+    }
+
+    private void TrySwing()
+    {
+        if (canSwing && !ai.IsGrabbing)
         {
-            if (!ai.IsGrabbed)
-            {
-                animator.SetTrigger("AxeSwing");
-                Debug.Log("Axe Swing is true");
-            }
+            animator.SetTrigger("AxeSwing");
+            Debug.Log("Axe Swing is true");
         }
     }
 
-    
-    private HashSet<Collider2D> hitEnemies = new HashSet<Collider2D>();
     public void OnTriggerStay2D(Collider2D other)
     {
         if (AxeDamage && other.CompareTag("AI"))
         {
             if (!hitEnemies.Contains(other))
             {
-                //Only allows for Ai to be hit once 
-               other.GetComponent<AI>().AIhealth -= 5f;
-               hitEnemies.Add(other);
+                other.GetComponent<AI>().AIhealth -= 5f;
+                hitEnemies.Add(other);
             }
         }
     }
-      
+
     public void AxeStopSwinging()
     {
         canSwing = true;
         AbleToShove = true;
     }
+
     public void AxeStartSwinging()
     {
         canSwing = false;
@@ -65,15 +86,18 @@ public class Weapon : MonoBehaviour
     {
         AxeDamage = true;
     }
+
     public void AxeHitboxEnd()
     {
         AxeDamage = false;
     }
+
     public void AxeStartShove()
     {
         canSwing = false;
         AbleToShove = false;
     }
+
     public void AxeEndShove()
     {
         AbleToShove = true;

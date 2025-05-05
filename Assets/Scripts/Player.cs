@@ -1,157 +1,167 @@
-
-
 using System;
 using System.Collections;
 using UnityEngine;
-
-
+using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.Users;
+using UnityEngine.InputSystem.XInput;
 
 public class Player : MonoBehaviour
 {
-    public Weapon Weapon;
-    public float speed = 8f;
-    private float _directionHorizontal;
-    private float _directionVertical;
-    private Rigidbody2D _rigidbody;
-    public AI ai;
-    public bool enableInput = true;
-    public float playerHealth;
-    private float AI_Speed_Recharge = 15f;
-    public GameObject ShoveZone;
-    public float ShoveCooldown;
+    public Weapon Weapon; // Reference to the player's weapon
+    public float speed = 8f; // Movement speed of the player
+    private float _directionHorizontal; // Horizontal movement direction
+    private float _directionVertical; // Vertical movement direction
+    private Rigidbody2D _rigidbody; // Rigidbody2D component for physics-based movement
+    public AI ai; // Reference to the AI component
+    public bool enableInput = true; // Flag to enable/disable player input
+    public float playerHealth; // Player's health
+    public GameObject ShoveZone; // Reference to the shove zone GameObject
+    public float ShoveCooldown; // Cooldown duration for shove
+    public bool DisableControllerConnectedAnimation = false; // Flag to disable controller connection animation
+    public bool aiIsShoved = false; // Flag to track if AI is shoved
 
-    // Start is called before the first frame update
-    void Start()
+    public bool ControllerConnected = false; // Tracks if a controller is connected
+    public Animator controllerUIAnimator; // Animator for controller UI animations
+
+    public PlayerInput playerInput; // Reference to the PlayerInput component
+
+    private PlayerControls _controls; // Input controls for the player
+
+    private void Awake()
     {
-        
-        ShoveZone.SetActive(false);
-        playerHealth = 100f;
-        //rb = RigidBody
-        _rigidbody = GetComponent<Rigidbody2D>();
-
+        // Initialize PlayerInput and PlayerControls
+        playerInput = GetComponent<PlayerInput>();
+        Debug.Log("Input System initialized: " + InputSystem.settings.updateMode);
+        _controls = new PlayerControls();
     }
 
-    // Update is called once per frame
+    private void OnEnable()
+    {
+        // Subscribe to control scheme changes and device changes
+        playerInput.onControlsChanged += OnControlsChanged;
+        if (Application.isPlaying)
+        {
+            Debug.Log("Subscribing to InputSystem.onDeviceChange during Play mode.");
+            InputSystem.onDeviceChange += (device, change) =>
+            {
+                Debug.Log($"Device changed: {device.displayName} - {change}");
+            };
+        }
+        // Enable gameplay controls and bind shove input
+        _controls.Gameplay.Enable();
+        _controls.Gameplay.Shove.performed += OnShove;
+    }
+
+    private void OnDisable()
+    {
+        // Unsubscribe from control scheme changes and device changes
+        playerInput.onControlsChanged -= OnControlsChanged;
+
+        if (Application.isPlaying)
+        {
+            Debug.Log("Unsubscribing from InputSystem.onDeviceChange during Play mode.");
+        }
+        // Disable gameplay controls and unbind shove input
+        _controls.Gameplay.Disable();
+        _controls.Gameplay.Shove.performed -= OnShove;
+    }
+
+    private void OnControlsChanged(PlayerInput input)
+    {
+        // Handle control scheme changes (e.g., switching between gamepad and keyboard)
+        if (input.currentControlScheme == "Gamepad")
+        {
+            Debug.Log("Gamepad is now active!");
+            // Trigger controller connection animation
+            controllerUIAnimator.SetTrigger("ShowController");
+        }
+        else
+        {
+            Debug.Log("Switched to non-gamepad input.");
+        }
+    }
+
+    void Start()
+    {
+        // Log connected gamepads
+        foreach (var gamepad in Gamepad.all)
+        {
+            Debug.Log("Connected gamepad: " + gamepad.displayName);
+        }
+
+        // Initialize player state
+        ShoveZone.SetActive(false);
+        playerHealth = 100f;
+        _rigidbody = GetComponent<Rigidbody2D>();
+    }
+
+    public void OnShove(InputAction.CallbackContext context)
+    {
+        // Activate shove zone and start coroutine to disable it after a delay
+        ShoveZone.SetActive(true);
+        StartCoroutine(ShoveZoneEnabledTime());
+    }
+
+    IEnumerator ShoveZoneEnabledTime()
+    {
+        // Disable shove zone after 0.5 seconds
+        yield return new WaitForSeconds(0.5f);
+        ShoveZone.SetActive(false);
+    }
+
     void Update()
     {
-        //Disables
-        if (ai.IsGrabbed)
+        // Update the input system
+        InputSystem.Update();
+
+        // Disable input and movement if the player is grabbed by AI
+        if (ai.IsGrabbing)
         {
             enableInput = false;
             speed = 0;
             _directionHorizontal = 0;
             _directionVertical = 0;
-            _rigidbody.velocity = new Vector2(0, 0);
+            _rigidbody.velocity = Vector2.zero;
         }
 
-        if (ai.IsGrabbed == false)
+        // Enable input and reset speed if the player is not grabbed
+        if (!ai.IsGrabbing)
         {
             enableInput = true;
             speed = 8.5f;
 
+            // Handle player movement input
             if (enableInput)
             {
-                // Horizontal Movement
-                this._directionHorizontal = Input.GetAxis("Horizontal");
-                if (this._directionHorizontal > 0f)
-                {
-                    _rigidbody.velocity = new Vector2(_directionHorizontal * speed, _rigidbody.velocity.x);
-                    transform.rotation = Quaternion.Euler(0, 0, -90); // Face right
-                }
+                Vector2 move = _controls.Gameplay.Move.ReadValue<Vector2>();
 
-                else if (_directionHorizontal < 0f)
-                {
-                    _rigidbody.velocity = new Vector2(_directionHorizontal * speed, _rigidbody.velocity.x);
-                    transform.rotation = Quaternion.Euler(0, 0, 90); // Face left
-                }
-                else
-                {
-                    _rigidbody.velocity = new Vector2(0, _rigidbody.velocity.y);
-                }
+                // Apply movement and rotation based on input
+                _rigidbody.velocity = move * speed;
 
-                //Vertical Movement
-                _directionVertical = Input.GetAxis("Vertical");
-                if (_directionVertical > 0f)
-                {
-                    _rigidbody.velocity = new Vector2(_rigidbody.velocity.x, _directionVertical * speed);
-                    transform.rotation = Quaternion.Euler(0, 0, 0); // Face up
-                }
-                else if (_directionVertical < 0f)
-                {
-                    _rigidbody.velocity = new Vector2(_rigidbody.velocity.x, _directionVertical * speed);
-                    transform.rotation = Quaternion.Euler(0, 0, 180); // Face down
-                }
-                else
-                {
-                    _rigidbody.velocity = new Vector2(_rigidbody.velocity.x, 0);
-                }
-
-                print($"THE COOLDOWN FOR SHOVING IS = {ShoveCooldown}");
-                if (Input.GetKeyDown(KeyCode.F))
-                {
-                    //If the AI is not grabbed and the cooldown is 0, the shove zone will be activated.
-                    if (ai.IsGrabbed == false && ShoveCooldown == 0)
-                    {
-                        if (Weapon.AbleToShove)
-                        {
-                            ShoveZone.SetActive(true);
-                            //Forces AI to not grab after being shoved
-                            ai.grabCooldown = ShoveCooldown;
-                            ai.IsGrabbed = false;
-                            StartCoroutine(DisableAfterDelay());
-                        }
-                    }
-                }
+                if (move.x > 0f)
+                    transform.rotation = Quaternion.Euler(0, 0, -90); // Right
+                else if (move.x < 0f)
+                    transform.rotation = Quaternion.Euler(0, 0, 90);  // Left
+                else if (move.y > 0f)
+                    transform.rotation = Quaternion.Euler(0, 0, 0);   // Up
+                else if (move.y < 0f)
+                    transform.rotation = Quaternion.Euler(0, 0, 180); // Down
             }
-            
-         
-
-
-
-
-
         }
-        
-      
-       
-    }
-    //Used to shortly activate the shove before disabling it again
-    private IEnumerator DisableAfterDelay()
-    {
-        //Activates the shove zone for 0.5 seconds
-        yield return new WaitForSeconds(0.5f);
-        //Disables the shove zone
-        ShoveZone.SetActive(false);
-        //Shove goes on a 3-second cooldown
-        ShoveCooldown = 0f; //Adjust this for the cooldown time of shoving!
-        //Starts the cooldown timer for shoving
-        
-
     }
 
     
-    
 
-    private Coroutine _stunTime;
-    private Coroutine _shoveCooldown;
-    //Used to detect when the AI is in the shove zone and to stop the AI from moving
     private void OnTriggerEnter2D(Collider2D other)
     {
-        //Checks if the object that entered the collider is an AI
+        // Handle AI entering the shove zone
         if (other.CompareTag("AI"))
         {
             Debug.Log("AI entered the collider");
             AI ai = other.GetComponent<AI>();
-            if (ai != null)
+            if (ai != null && Weapon.AbleToShove)
             {
-                ai.canMove = false;
-                Debug.Log("AI speed set to 0");
-                if (_stunTime != null)
-                {
-                    StopCoroutine(_stunTime);
-                    _stunTime = null;
-                }
-                _stunTime = StartCoroutine(ShoveTime(ai));
+                StartCoroutine(AIShoveEffect());
             }
             else
             {
@@ -162,12 +172,11 @@ public class Player : MonoBehaviour
         {
             Debug.Log("Non-AI object entered the collider");
         }
-        
+
+        // Handle item pickup
         if (other.gameObject.CompareTag("Item"))
         {
-            
             Debug.Log("Player has entered the item collider");
-            //AI Generated Snippet 
             if (other.gameObject != null)
             {
                 other.gameObject.GetComponent<ItemObject>().OnHandlePickupItem();
@@ -176,41 +185,22 @@ public class Player : MonoBehaviour
             {
                 Debug.LogError("Item is null.");
             }
-            //End of AI Generated Snippet
-        }
-       
-    }
-
-    //Used for timing until the AI can move again after being shoved
-    private IEnumerator ShoveTime(AI ai)
-    {
-        AI_Speed_Recharge = 15f;
-        while (AI_Speed_Recharge > 0f)
-        {
-            //Forces the AI to stand still
-            ai.canMove = false;
-            //Reduces 1 from the AI speed recharge every 0.1 seconds
-            AI_Speed_Recharge -= 1f;
-            print($"AI SPEED RECHARGE IS = {ShoveCooldown}");
-            yield return new WaitForSeconds(0.1f);
-        }
-        
-        print("AI speed is back to normal");
-        ai.ResetMovement();
-        _stunTime = null;
-       
-    }
-    // Used for the cooldown timer of shoving. Counts down from 3 seconds to 0.
-    public void ShoveCooldownTime()
-    {
-        if (Weapon.AbleToShove)
-        {
-            StopCoroutine(_shoveCooldown);
-            _shoveCooldown = null;
         }
     }
 
-   
+    public IEnumerator AIShoveEffect()
+    {
+        // Temporarily disable AI movement
+        ai.canMove = false;
+        aiIsShoved = true;
+        yield return new WaitForSeconds(2f);
+        ai.canMove = true;
+        aiIsShoved = false;
+    }
+
+    // Disable controller connection animation (Currently Unused)
+    public void DisableControlllerConnectedAnimation()
+    {
+        DisableControllerConnectedAnimation = true;
+    }
 }
-    
-
