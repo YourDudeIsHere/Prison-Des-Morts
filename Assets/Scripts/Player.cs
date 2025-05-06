@@ -133,18 +133,18 @@ public class Player : MonoBehaviour
             // Handle player movement input
             if (enableInput)
             {
-                Vector2 move = _controls.Gameplay.Move.ReadValue<Vector2>();
+                Vector2 move = _controls.Gameplay.Move.ReadValue<Vector2>().normalized;
 
                 // Apply movement and rotation based on input
                 _rigidbody.velocity = move * speed;
-
+                Debug.Log(move);
                 if (move.x > 0f)
                     transform.rotation = Quaternion.Euler(0, 0, -90); // Right
-                else if (move.x < 0f)
+                if (move.x < 0f)
                     transform.rotation = Quaternion.Euler(0, 0, 90);  // Left
-                else if (move.y > 0f)
+                if (move.y > 0f)
                     transform.rotation = Quaternion.Euler(0, 0, 0);   // Up
-                else if (move.y < 0f)
+                if (move.y < 0f)
                     transform.rotation = Quaternion.Euler(0, 0, 180); // Down
             }
         }

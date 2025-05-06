@@ -1,0 +1,20 @@
+C:/Users/00047233/Downloads/krita-x64-5.2.6/krita-x64-5.2.6/bin/ffmpeg.exe -hide_banner -y -y -r 24 -start_number 0 -start_number_range 1 -i C:/Users/00047233/OneDrive - North Kent College/Documents/GitHub/Prison-Des-Morts/Assets/Art/UI Assets/frame%04d.png -c:v libopenh264 -b:v 5000k C:/Users/00047233/OneDrive - North Kent College/Documents/GitHub/Prison-Des-Morts/Assets/Art/UI Assets/Menu_Storyboard_Frame1.mp4
+=====================================================
+Input #0, image2, from 'C:/Users/00047233/OneDrive - North Kent College/Documents/GitHub/Prison-Des-Morts/Assets/Art/UI Assets/frame%04d.png':
+  Duration: 00:00:00.08, start: 0.000000, bitrate: N/A
+  Stream #0:0: Video: png, rgba(pc), 1920x1080 [SAR 3937:3937 DAR 16:9], 25 fps, 25 tbr, 25 tbn, 25 tbc
+Stream mapping:
+  Stream #0:0 -> #0:0 (png (native) -> h264 (libopenh264))
+Press [q] to stop, [?] for help
+[libopenh264 @ 000001e787c93740] Slice count will be set automatically
+[libopenh264 @ 000001e787c93740] [OpenH264] this = 0x000001E787D56C10, Warning:bEnableFrameSkip = 0,bitrate can't be controlled for RC_QUALITY_MODE,RC_BITRATE_MODE and RC_TIMESTAMP_MODE without enabling skip frame.
+Output #0, mp4, to 'C:/Users/00047233/OneDrive - North Kent College/Documents/GitHub/Prison-Des-Morts/Assets/Art/UI Assets/Menu_Storyboard_Frame1.mp4':
+  Metadata:
+    encoder         : Lavf58.76.100
+  Stream #0:0: Video: h264 (avc1 / 0x31637661), yuv420p(tv, progressive), 1920x1080 [SAR 1:1 DAR 16:9], q=2-31, 5000 kb/s, 24 fps, 12288 tbn
+    Metadata:
+      encoder         : Lavc58.134.100 libopenh264
+    Side data:
+      cpb: bitrate max/min/avg: 5000000/0/5000000 buffer size: 0 vbv_delay: N/A
+frame=    1 fps=0.0 q=-0.0 size=       0kB time=00:00:00.00 bitrate=4740.7kbits/s speed=0.0193x    frame=    2 fps=0.0 q=-0.0 Lsize=      78kB time=00:00:00.04 bitrate=15368.6kbits/s speed=0.253x    
+video:77kB audio:0kB subtitle:0kB other streams:0kB global headers:0kB muxing overhead: 1.075011%
