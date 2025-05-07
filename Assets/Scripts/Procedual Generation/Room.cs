@@ -2,9 +2,12 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class Room : MonoBehaviour
 {
+    public int NumberOfZombies;
+    public GameObject Zombie;
     public GameObject wallLeft;
     public GameObject wallRight;
     public GameObject wallTop;
@@ -17,6 +20,8 @@ public class Room : MonoBehaviour
     public int X;
 
     public int Y;
+    
+    public int Z;
 
     private bool UpdatedDoors = false;
 
@@ -24,6 +29,7 @@ public class Room : MonoBehaviour
     { 
         this.X = X;
         this.Y = Y;
+        this.Z = Z;
     }
     
     public Door leftDoor;
@@ -35,6 +41,7 @@ public class Room : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        NumberOfZombies = Random.Range(0, 5);
         if(RoomController.instance == null)
         {
             Debug.LogError("Wrong scene to press play in.");
@@ -158,6 +165,13 @@ public class Room : MonoBehaviour
         if (other.tag == "Player")
         {
             RoomController.instance.OnPlayerEnterRoom(this);
+            //AI Snippet
+            for (int i = 0; i < NumberOfZombies; i++)
+            {
+                Debug.Log($"Zombie Spawning {NumberOfZombies}");
+                Instantiate(Zombie, new Vector3(X, Y, Z), Quaternion.identity);
+            }
+            //End of AI Snippet
         }
     }
 }
