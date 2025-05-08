@@ -55,7 +55,7 @@ public class RoomController : MonoBehaviour
         {
             return;
         }
-        
+        //Used to identify conditions needed to spawn the end room
         if(loadRoomQueue.Count == 0)
         {
             if (!SpawnedEndRoom)

@@ -1355,6 +1355,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c201a3b88667fa541bce279339919838, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  NumberOfZombies: 0
+  Zombie: {fileID: 1969981322682118622, guid: 9c06b6e69ce5c2f429ea180db0c57847, type: 3}
   wallLeft: {fileID: 1604333602}
   wallRight: {fileID: 1723761805}
   wallTop: {fileID: 163994623}
@@ -1363,6 +1365,7 @@ MonoBehaviour:
   Height: 10
   X: 0
   Y: 0
+  Z: 0
   leftDoor: {fileID: 2128022249}
   rightDoor: {fileID: 41510523}
   bottomDoor: {fileID: 47093045}
