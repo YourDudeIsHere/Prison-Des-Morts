@@ -1,7 +1,6 @@
-using System;
+
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using System.Linq;
@@ -156,6 +155,7 @@ public class RoomController : MonoBehaviour
             }
 
             loadedRooms.Add(room);
+            
             
         }
         else

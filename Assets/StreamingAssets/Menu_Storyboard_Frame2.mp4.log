@@ -1,0 +1,20 @@
+C:/Program Files (x86)/Steam/steamapps/common/Krita/krita/bin/ffmpeg.exe -hide_banner -y -y -r 2 -start_number 0 -start_number_range 1 -i D:/Games (Dev)/Prison-Des-Morts/Assets/StreamingAssets/frame%04d.png -c:v libopenh264 -b:v 5000k D:/Games (Dev)/Prison-Des-Morts/Assets/StreamingAssets/Menu_Storyboard_Frame2.mp4
+=====================================================
+Input #0, image2, from 'D:/Games (Dev)/Prison-Des-Morts/Assets/StreamingAssets/frame%04d.png':
+  Duration: 00:00:00.08, start: 0.000000, bitrate: N/A
+  Stream #0:0: Video: png, rgba(pc), 1920x1080 [SAR 3937:3937 DAR 16:9], 25 fps, 25 tbr, 25 tbn, 25 tbc
+Stream mapping:
+  Stream #0:0 -> #0:0 (png (native) -> h264 (libopenh264))
+Press [q] to stop, [?] for help
+[libopenh264 @ 0000025057176800] Slice count will be set automatically
+[libopenh264 @ 0000025057176800] [OpenH264] this = 0x0000025057234AD0, Warning:bEnableFrameSkip = 0,bitrate can't be controlled for RC_QUALITY_MODE,RC_BITRATE_MODE and RC_TIMESTAMP_MODE without enabling skip frame.
+Output #0, mp4, to 'D:/Games (Dev)/Prison-Des-Morts/Assets/StreamingAssets/Menu_Storyboard_Frame2.mp4':
+  Metadata:
+    encoder         : Lavf58.76.100
+  Stream #0:0: Video: h264 (avc1 / 0x31637661), yuv420p(tv, progressive), 1920x1080 [SAR 1:1 DAR 16:9], q=2-31, 5000 kb/s, 2 fps, 16384 tbn
+    Metadata:
+      encoder         : Lavc58.134.100 libopenh264
+    Side data:
+      cpb: bitrate max/min/avg: 5000000/0/5000000 buffer size: 0 vbv_delay: N/A
+frame=    1 fps=0.0 q=-0.0 size=       0kB time=00:00:00.00 bitrate=6295.1kbits/s speed=0.0256x    frame=    2 fps=0.0 q=-0.0 Lsize=      93kB time=00:00:00.50 bitrate=1531.6kbits/s speed=3.77x    
+video:93kB audio:0kB subtitle:0kB other streams:0kB global headers:0kB muxing overhead: 0.899002%

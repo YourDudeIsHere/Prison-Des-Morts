@@ -6,6 +6,11 @@ using Random = UnityEngine.Random;
 
 public class Room : MonoBehaviour
 {
+    
+    public CameraController camController;
+    
+    public bool hasBeenVisited = false; // Tracks if the room has been visited
+    
     public int NumberOfZombies;
     public GameObject Zombie;
     public GameObject wallLeft;
@@ -29,7 +34,7 @@ public class Room : MonoBehaviour
     { 
         this.X = X;
         this.Y = Y;
-        this.Z = Z;
+        
     }
     
     public Door leftDoor;
@@ -72,6 +77,7 @@ public class Room : MonoBehaviour
         
         RoomController.instance.RegisterRoom(this);
     }
+    
 
     void Update()
     {
@@ -81,6 +87,8 @@ public class Room : MonoBehaviour
            UpdatedDoors = true;
        }
     }
+    
+    
     
     public void RemoveUnconnectedDoors()
     {
@@ -159,19 +167,56 @@ public class Room : MonoBehaviour
     {
         return new Vector3(X * Width, Y * Height);
     }
+    
+    private void SpawnZombies()
+    {
+        int spawnAmount = Random.Range(0, 3); // Example spawn range
+        GameObject player = GameObject.FindGameObjectWithTag("Player");
+
+        if (player == null)
+        {
+            Debug.LogError("Player not found in scene.");
+            return;
+        }
+
+        Player playerScript = player.GetComponent<Player>();
+        UIManager uiManager = FindObjectOfType<UIManager>(); 
+
+        for (int i = 0; i < spawnAmount; i++)
+        {
+            float x = Random.Range(transform.position.x - Width / 2, transform.position.x + Width / 2);
+            float y = Random.Range(transform.position.y - Height / 2, transform.position.y + Height / 2);
+
+            GameObject spawnedZombie = Instantiate(Zombie, new Vector3(x, y, 0), Quaternion.identity);
+            spawnedZombie.name = $"Zombie_{i}";
+            spawnedZombie.transform.parent = transform;
+
+            AI zombieAI = spawnedZombie.GetComponent<AI>();
+            if (zombieAI != null)
+            {
+                zombieAI.player = player;
+                zombieAI.playerScript = playerScript;
+                zombieAI.uiManager = uiManager;
+            }
+            else
+            {
+                Debug.LogWarning("Spawned zombie has no AI script attached!");
+            }
+        }
+    }
 
     private void OnTriggerEnter2D(Collider2D other)
     {
         if (other.tag == "Player")
         {
             RoomController.instance.OnPlayerEnterRoom(this);
-            //AI Snippet
-            for (int i = 0; i < NumberOfZombies; i++)
+            if (!hasBeenVisited)
             {
-                Debug.Log($"Zombie Spawning {NumberOfZombies}");
-                Instantiate(Zombie, new Vector3(X, Y, Z), Quaternion.identity);
+                SpawnZombies();
+                hasBeenVisited = true; // Mark the room as visited
             }
-            //End of AI Snippet
         }
     }
+    
+   
 }
