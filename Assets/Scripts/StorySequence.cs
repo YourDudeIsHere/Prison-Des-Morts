@@ -36,6 +36,11 @@ public class StoryVideoSequence : MonoBehaviour
         videoDisplay.texture = videoPlayer.targetTexture; // Assign the render texture to the RawImage
     }
 
+    void OptionsButton()
+    {
+       SceneManager.LoadScene("Options", LoadSceneMode.Additive);
+    }
+
     void StartSequence()
     {
         // Hide menu UI and show video display

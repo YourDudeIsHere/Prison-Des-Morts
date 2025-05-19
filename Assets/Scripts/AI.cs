@@ -38,14 +38,27 @@ public class AI : MonoBehaviour
 
     public bool canMove = true;
     
+    public void Initialize(GameObject playerObj, Player script, UIManager ui)
+    {
+        player = playerObj;
+        playerScript = script;
+        uiManager = ui;
+    }
     
     // Start is called before the first frame update
     void Start()
     {
+        if (player == null)
+            player = GameObject.FindGameObjectWithTag("Player");
+
+        if (playerScript == null)
+            playerScript = player.GetComponent<Player>();
+        
         _rigidbody = GetComponent<Rigidbody2D>();
         
         // Initialize the coroutine reference
         _healthReductionCoroutine = null;
+        
     }
 
 
@@ -107,10 +120,14 @@ public class AI : MonoBehaviour
     {
         if (grabCooldownTimer <= 0)
         {
+            playerScript.enableInput = false;
             IsGrabbing = true;
             canMove = false;
             grabCooldownTimer = grabCooldown; // Reset the cooldown timer
-            //Checks if the coroutine is running and starts it if it is not, Reducing the players health by 1 every second.
+            if (playerScript != null)
+            {
+                playerScript.SetGrabbedState(true); // 👈 call player directly
+            }
             _healthReductionCoroutine ??= StartCoroutine(ReduceHealthOverTime());
         }
     }
@@ -137,23 +154,14 @@ public class AI : MonoBehaviour
             if (playerScript != null)
             {
                 playerScript.playerHealth -= 1;
-                UpdateImageAlpha();
+                playerScript.UpdateImageAlpha();
             }
             yield return new WaitForSeconds(0.25f);
         }
 
        
     }
-    private void UpdateImageAlpha()
-    {
-        if (healthVignette != null)
-        {
-            Color color = healthVignette.color;
-            color.a = Mathf.Clamp01(color.a + 0.01f); // Increase the alpha value by 0.01
-            healthVignette.color = color;
-            print ("Health Vignette Alpha = " + color.a);
-        }
-    }
+    
     public void ResetMovement()
     {
         canMove = true;

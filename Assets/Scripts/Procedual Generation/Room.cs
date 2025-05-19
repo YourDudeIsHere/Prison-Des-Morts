@@ -181,6 +181,8 @@ public class Room : MonoBehaviour
 
         Player playerScript = player.GetComponent<Player>();
         UIManager uiManager = FindObjectOfType<UIManager>(); 
+        
+        
 
         for (int i = 0; i < spawnAmount; i++)
         {
@@ -194,10 +196,15 @@ public class Room : MonoBehaviour
             AI zombieAI = spawnedZombie.GetComponent<AI>();
             if (zombieAI != null)
             {
+                if (zombieAI != null)
+                {
+                    zombieAI.Initialize(player, playerScript, uiManager);
+                }
                 zombieAI.player = player;
                 zombieAI.playerScript = playerScript;
                 zombieAI.uiManager = uiManager;
             }
+            
             else
             {
                 Debug.LogWarning("Spawned zombie has no AI script attached!");

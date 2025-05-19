@@ -7,6 +7,7 @@ using UnityEngine.InputSystem.XInput;
 
 public class Player : MonoBehaviour
 {
+    public UnityEngine.UI.Image healthVignette; // Reference to the health vignette image
     public Weapon Weapon; // Reference to the player's weapon
     public float speed = 8f; // Movement speed of the player
     private float _directionHorizontal; // Horizontal movement direction
@@ -26,6 +27,23 @@ public class Player : MonoBehaviour
     public PlayerInput playerInput; // Reference to the PlayerInput component
 
     private PlayerControls _controls; // Input controls for the player
+    
+    public bool isGrabbed;
+    public void SetGrabbedState(bool grabbed)
+    {
+        isGrabbed = grabbed;
+        Debug.Log("Player grab state: " + grabbed);
+        
+        if (isGrabbed)
+        {
+            enableInput = false;
+            speed = 0;
+            _directionHorizontal = 0;
+            _directionVertical = 0;
+            _rigidbody.velocity = Vector2.zero;
+        }
+        
+    }
 
     private void Awake()
     {
@@ -80,6 +98,17 @@ public class Player : MonoBehaviour
             Debug.Log("Switched to non-gamepad input.");
         }
     }
+    
+    public void UpdateImageAlpha()
+    {
+        if (healthVignette != null)
+        {
+            Color color = healthVignette.color;
+            color.a = Mathf.Clamp01(color.a + 0.01f); // Increase the alpha value by 0.01
+            healthVignette.color = color;
+            print ("Health Vignette Alpha = " + color.a);
+        }
+    }
 
     void Start()
     {
@@ -115,7 +144,7 @@ public class Player : MonoBehaviour
         InputSystem.Update();
 
         // Disable input and movement if the player is grabbed by AI
-        if (ai.IsGrabbing)
+        if (isGrabbed)
         {
             enableInput = false;
             speed = 0;
@@ -125,7 +154,7 @@ public class Player : MonoBehaviour
         }
 
         // Enable input and reset speed if the player is not grabbed
-        if (!ai.IsGrabbing)
+        if (!isGrabbed)
         {
             enableInput = true;
             speed = 8.5f;

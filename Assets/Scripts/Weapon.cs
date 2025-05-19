@@ -15,6 +15,8 @@ public class Weapon : MonoBehaviour
 
     private HashSet<Collider2D> hitEnemies = new HashSet<Collider2D>();
 
+    public Player playerscript;
+
     private void Awake()
     {
         controls = new PlayerControls();
@@ -50,7 +52,7 @@ public class Weapon : MonoBehaviour
 
     private void TrySwing()
     {
-        if (canSwing && !ai.IsGrabbing)
+        if (canSwing && !playerscript.isGrabbed)
         {
             animator.SetTrigger("AxeSwing");
             Debug.Log("Axe Swing is true");
