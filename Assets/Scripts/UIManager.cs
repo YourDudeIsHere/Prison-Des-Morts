@@ -9,9 +9,10 @@ using Image = UnityEngine.UI.Image;
 
 public class UIManager : MonoBehaviour
 {
+    public Player playerscript;
     public GameObject panel;
     public AI ai;
-   public Image grabButton;
+    public Image grabButton;
 
     public float grabScore;
     // Start is called before the first frame update
@@ -25,11 +26,16 @@ public class UIManager : MonoBehaviour
     void Update()
     {
     
-        if(ai.IsGrabbing)
+        if(playerscript.isGrabbed)
         {
             panel.SetActive(true);
+            HandleButtonSize();
+            if (Input.GetKeyDown(KeyCode.E))
+            {
+                grabScore -= 1;
+            }
         }
-        if(ai.IsGrabbing == false)
+        if(!playerscript.isGrabbed)
         {
             panel.SetActive(false);
             grabScore = 10;
@@ -46,7 +52,7 @@ public class UIManager : MonoBehaviour
         }
         if(grabScore == 0)
         {
-            ai.IsGrabbing = false;
+            ai.Release();
         }
         //Function used to shrink and rezise the button when E is pressed. Used for better visual feedback.
         void HandleButtonSize()

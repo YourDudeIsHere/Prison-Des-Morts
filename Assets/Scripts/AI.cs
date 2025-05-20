@@ -21,7 +21,7 @@ public class AI : MonoBehaviour
     public GameObject player;
     public UIManager uiManager;
     // This is the speed at which the AI will move.
-    public float speed = 6f;
+    public float speed = 3f;
     // This is the distance between the AI and the player.
     private float distance;
     //To Decide if the player is grabbed or not

@@ -246,12 +246,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 28482f23648468b4e90873b7f04c7018, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  player: {fileID: 0}
-  speed: 8
-  IsGrabbed: 0
+  visionRange: 15
+  AIhealth: 10
+  player: {fileID: 4720235435182414585, guid: 2e0e3ca6f83869542902dee419618dec, type: 3}
+  uiManager: {fileID: 8212293932293160936, guid: 9df9efc6f437a724c8675759df81d667, type: 3}
+  speed: 4
+  IsGrabbing: 0
   grabCooldown: 10
-  playerScript: {fileID: 0}
-  healthVignette: {fileID: 0}
+  playerScript: {fileID: 1805448789854943740, guid: 2e0e3ca6f83869542902dee419618dec, type: 3}
+  healthVignette: {fileID: 7950421507357103104, guid: 787bb3add883b934a94ba94c7db41f03, type: 3}
   canMove: 1
 --- !u!114 &5702313540686588631
 MonoBehaviour:
@@ -265,10 +268,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9c50968044acfa042aa893e61ea66058, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  panel: {fileID: 0}
+  playerscript: {fileID: 1805448789854943740, guid: 2e0e3ca6f83869542902dee419618dec, type: 3}
+  panel: {fileID: 7376662844069732693, guid: 9df9efc6f437a724c8675759df81d667, type: 3}
   ai: {fileID: 406821541473363873}
-  grabButton: {fileID: 0}
-  grabScore: 0
+  grabButton: {fileID: 1495868389810090484, guid: 9df9efc6f437a724c8675759df81d667, type: 3}
+  grabScore: 10
 --- !u!61 &5156356468716438503
 BoxCollider2D:
   m_ObjectHideFlags: 0
