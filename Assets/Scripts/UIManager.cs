@@ -1,56 +1,35 @@
-using System.Collections;
-using System.Collections.Generic;
+using System;
 using UnityEngine;
-using UnityEngine.Serialization;
 using UnityEngine.UI;
-using UnityEngine.UIElements;
-using Image = UnityEngine.UI.Image;
-
 
 public class UIManager : MonoBehaviour
 {
+    public static UIManager Instance { get; private set; }
+
+    public Player playerscript;
     public GameObject panel;
     public AI ai;
-   public Image grabButton;
+    public Image grabButton;
 
     public float grabScore;
-    // Start is called before the first frame update
-    void Start()
-    {
-        panel.SetActive(false);
-        grabScore = 10;
-    }
 
-    // Update is called once per frame
+    private bool isPanelActive = false; // Track the panel's state
+
+    void Awake()
+    {
+        // Singleton setup
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+        Instance = this;
+    }
     void Update()
     {
-    
-        if(ai.IsGrabbing)
+        if (isPanelActive && Input.GetKeyDown(KeyCode.E))
         {
-            panel.SetActive(true);
-        }
-        if(ai.IsGrabbing == false)
-        {
-            panel.SetActive(false);
-            grabScore = 10;
-        }
-
-        // When E is pressed, take one away from the current grab score
-        if(panel.activeSelf)
-        {
-            HandleButtonSize();
-            if (Input.GetKeyDown(KeyCode.E))
-            {
-                grabScore -= 1;
-            }
-        }
-        if(grabScore == 0)
-        {
-            ai.IsGrabbing = false;
-        }
-        //Function used to shrink and rezise the button when E is pressed. Used for better visual feedback.
-        void HandleButtonSize()
-        {
+            grabScore -= 1;
             if (Input.GetKeyDown(KeyCode.E))
             {
                 grabButton.transform.localScale = new Vector2(0.95f, 0.95f);
@@ -59,7 +38,93 @@ public class UIManager : MonoBehaviour
             {
                 grabButton.transform.localScale = new Vector2(1f, 1f);
             }
+
+            if (grabScore <= 0)
+            {
+                HideGrabUI();
+                ai.Release();
+            }
         }
     }
-   
+
+    void Start()
+    {
+
+        // Find the panel (GrabbedUI)
+        if (panel == null)
+        {
+            panel = GameObject.Find("GrabbedUI");
+            if (panel == null)
+            {
+                Debug.LogError("Panel (GrabbedUI) not found!");
+            }
+        }
+        if (playerscript == null)
+        {
+            playerscript = FindObjectOfType<Player>();
+            if (playerscript == null)
+            {
+                Debug.LogError("Player script not found!");
+            }
+        }
+        if (ai == null)
+        {
+            ai = FindObjectOfType<AI>();
+            if (ai == null)
+            {
+                Debug.LogError("AI script not found!");
+            }
+        }
+
+        // Find the grabButton as a child of the panel
+        if (panel != null && grabButton == null)
+        {
+            Transform grabButtonTransform = panel.transform.Find("GrabButton");
+            if (grabButtonTransform != null)
+            {
+                grabButton = grabButtonTransform.GetComponent<Image>();
+            }
+            else
+            {
+                Debug.LogError("GrabButton not found as a child of GrabbedUI!");
+            }
+        }
+
+        if (panel != null)
+        {
+            panel.SetActive(false);
+        }
+        grabScore = 10;
+    }
+
+
+    public void ShowGrabbedUI()
+    {
+        if (panel != null)
+        {
+            grabScore = 10;
+            panel.SetActive(true);
+            isPanelActive = true;
+        }
+    }
+
+    public void HideGrabUI()
+    {
+        isPanelActive = false;
+        panel.SetActive(false);
+        ai.IsGrabbing = false;
+        playerscript.isGrabbed = false;
+    }
+
+    void HandleButtonSize()
+    {
+        if (Input.GetKeyDown(KeyCode.E))
+        {
+            grabButton.transform.localScale = new Vector2(0.95f, 0.95f);
+        }
+        if (Input.GetKeyUp(KeyCode.E))
+        {
+            grabButton.transform.localScale = new Vector2(1f, 1f);
+        }
+    }
 }

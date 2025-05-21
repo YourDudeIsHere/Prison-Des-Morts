@@ -32,10 +32,16 @@ public class AI : MonoBehaviour
     private float grabCooldownTimer;
     private Rigidbody2D _rigidbody;
     
+    public bool canGrab = true;
+    
     public Player playerScript;
+    
+    private bool isInForcedRelease;
 
     public Image healthVignette;
-
+    
+    public static AI currentGrabbingAI;
+    
     public bool canMove = true;
     
     public void Initialize(GameObject playerObj, Player script, UIManager ui)
@@ -65,6 +71,11 @@ public class AI : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (playerScript.enableInput && !playerScript.isGrabbed && IsGrabbing)
+        {
+            ForceResetGrabState();
+        }
+        
         if (!IsGrabbing && !playerScript.aiIsShoved)
         {
             canMove = true;
@@ -74,7 +85,7 @@ public class AI : MonoBehaviour
             Destroy(gameObject);
         }
         // Update the cooldown timer
-        if (grabCooldownTimer > 0)
+        if (grabCooldownTimer > 0f)
         {
             grabCooldownTimer -= Time.deltaTime;
         }
@@ -118,39 +129,119 @@ public class AI : MonoBehaviour
     // This function is called when the AI is grabbed by the player.
     public void Grab()
     {
-        if (grabCooldownTimer <= 0)
+        if (IsGrabbing || grabCooldownTimer > 0f || isInForcedRelease)
         {
-            playerScript.enableInput = false;
-            IsGrabbing = true;
-            canMove = false;
-            grabCooldownTimer = grabCooldown; // Reset the cooldown timer
-            if (playerScript != null)
-            {
-                playerScript.SetGrabbedState(true); // 👈 call player directly
-            }
-            _healthReductionCoroutine ??= StartCoroutine(ReduceHealthOverTime());
+            Debug.Log($"{name} cannot grab right now (grabbing: {IsGrabbing}, cooldown: {grabCooldownTimer}, forcedRelease: {isInForcedRelease})");
+            return;
         }
+        
+        // --- passed all checks ---
+        Debug.Log($"[{name}] Successfully started grabbing.");
+
+        currentGrabbingAI = this;
+        IsGrabbing = true;
+        canMove = false;
+        grabCooldownTimer = grabCooldown;
+
+        UIManager.Instance.ShowGrabbedUI();
+
+        if (playerScript != null)
+        {
+            playerScript.SetGrabbedState(true);
+            playerScript.enableInput = false;
+        }
+
+        _healthReductionCoroutine ??= StartCoroutine(ReduceHealthOverTime());
     }
     
     // This function is called when the AI is released by the player.
     public void Release()
     {
-        // Sets the AI to not be grabbing and allows movement again.
-        canMove = true;
+        Debug.Log("RELEASE IS BEING CALLED");
+        ForceResetGrabState();
+        UIManager.Instance.HideGrabUI();
+        if (!IsGrabbing) return;
+
+        Debug.Log($"{name} has been forced to release the player.");
+
         IsGrabbing = false;
-        //Checks for the coroutine and stops it if it is running
+        canMove = false;
+        isInForcedRelease = true;
+
+        if (currentGrabbingAI == this)
+            currentGrabbingAI = null;
+
         if (_healthReductionCoroutine != null)
         {
             StopCoroutine(_healthReductionCoroutine);
             _healthReductionCoroutine = null;
         }
+
+        playerScript.enableInput = true;
+        playerScript.SetGrabbedState(false);
+
+        
+
+        StartCoroutine(ForceReleaseCooldown());
+    }
+    
+    public void ForceResetGrabState()
+    {
+        Debug.LogWarning($"{name}: FORCE RESET triggered.");
+
+        // Stop health drain
+        if (_healthReductionCoroutine != null)
+        {
+            StopCoroutine(_healthReductionCoroutine);
+            _healthReductionCoroutine = null;
+        }
+
+        // Reset key flags
+        IsGrabbing = false;
+        canMove = true;
+        isInForcedRelease = false;
+        grabCooldownTimer = grabCooldown;
+
+        // Clear global reference if needed
+        if (currentGrabbingAI == this)
+            currentGrabbingAI = null;
+
+        // Reset player grab state
+        if (playerScript != null)
+        {
+            playerScript.enableInput = true;
+            playerScript.SetGrabbedState(false);
+        }
+
+        // Reset UI
+        if (UIManager.Instance != null)
+        {
+            UIManager.Instance.HideGrabUI();
+        }
+    }
+    
+    private IEnumerator ForceReleaseCooldown()
+    {
+        // Disable any grabbing logic for 2 seconds
+        yield return new WaitForSeconds(2f);
+        canMove = true;
+        isInForcedRelease = false;
+    }
+    
+    private void ResetCanGrab()
+    {
+        canGrab = true;
     }
     private Coroutine _healthReductionCoroutine;
     //Coroutine to reduce the players health by 1 every second.
     private IEnumerator ReduceHealthOverTime()
     {
+        Debug.Log("[AI] Health coroutine started");
+    
         while (IsGrabbing)
         {
+            Debug.Log("[AI] Still grabbing, reducing health");
+
             if (playerScript != null)
             {
                 playerScript.playerHealth -= 1;
@@ -158,6 +249,8 @@ public class AI : MonoBehaviour
             }
             yield return new WaitForSeconds(0.25f);
         }
+
+        Debug.Log("[AI] Coroutine exit: IsGrabbing is now false");
 
        
     }

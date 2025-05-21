@@ -15,6 +15,8 @@ public class RoomInfo
 
 public class RoomController : MonoBehaviour
 {
+    public GameObject ZombiePrefab;
+    
     private Room _room;
 
     public static RoomController instance;
@@ -142,6 +144,7 @@ public class RoomController : MonoBehaviour
                 currentLoadRoomData.X * room.Width,
                 currentLoadRoomData.Y * room.Height,
                 0);
+            room.SetZombiePrefab(ZombiePrefab);
             room.X = currentLoadRoomData.X;
             room.Y = currentLoadRoomData.Y;
             room.name = CurrentWorldName + "/" + room.name;

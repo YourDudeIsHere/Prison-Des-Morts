@@ -168,9 +168,14 @@ public class Room : MonoBehaviour
         return new Vector3(X * Width, Y * Height);
     }
     
+    public void SetZombiePrefab(GameObject zombiePrefab)
+    {
+        Zombie = zombiePrefab;
+    }
+    
     private void SpawnZombies()
     {
-        int spawnAmount = Random.Range(0, 3); // Example spawn range
+        int spawnAmount = Random.Range(1, 3); // Example spawn range
         GameObject player = GameObject.FindGameObjectWithTag("Player");
 
         if (player == null)
@@ -183,6 +188,8 @@ public class Room : MonoBehaviour
         UIManager uiManager = FindObjectOfType<UIManager>(); 
         
         
+        
+        
 
         for (int i = 0; i < spawnAmount; i++)
         {
@@ -190,6 +197,9 @@ public class Room : MonoBehaviour
             float y = Random.Range(transform.position.y - Height / 2, transform.position.y + Height / 2);
 
             GameObject spawnedZombie = Instantiate(Zombie, new Vector3(x, y, 0), Quaternion.identity);
+            Debug.Log($"Spawned zombie: {spawnedZombie.name} at {spawnedZombie.transform.position}");
+            spawnedZombie.SetActive(true);
+            spawnedZombie.transform.localScale = Vector3.one;
             spawnedZombie.name = $"Zombie_{i}";
             spawnedZombie.transform.parent = transform;
 
@@ -211,16 +221,18 @@ public class Room : MonoBehaviour
             }
         }
     }
+    
+    
 
     private void OnTriggerEnter2D(Collider2D other)
     {
         if (other.tag == "Player")
         {
             RoomController.instance.OnPlayerEnterRoom(this);
-            if (!hasBeenVisited)
+            if (!hasBeenVisited && !(X == 0 && Y == 0))
             {
                 SpawnZombies();
-                hasBeenVisited = true; // Mark the room as visited
+                hasBeenVisited = true;
             }
         }
     }

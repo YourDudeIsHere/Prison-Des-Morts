@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Users;
 using UnityEngine.InputSystem.XInput;
+using UnityEngine.SceneManagement;
 
 public class Player : MonoBehaviour
 {
@@ -107,6 +108,10 @@ public class Player : MonoBehaviour
             color.a = Mathf.Clamp01(color.a + 0.01f); // Increase the alpha value by 0.01
             healthVignette.color = color;
             print ("Health Vignette Alpha = " + color.a);
+            if (color.a == 100)
+            {
+                SceneManager.LoadScene("Menu");
+            }
         }
     }
 
@@ -142,6 +147,8 @@ public class Player : MonoBehaviour
     {
         // Update the input system
         InputSystem.Update();
+
+        
 
         // Disable input and movement if the player is grabbed by AI
         if (isGrabbed)

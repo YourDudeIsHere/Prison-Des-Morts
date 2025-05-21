@@ -20,7 +20,7 @@ public class GrabZone : MonoBehaviour
     {
         
     }
-    private void OnTriggerStay2D(Collider2D collision)
+    private void OnTriggerEnter2D(Collider2D collision)
     {
         //To check if the player is in the grab zone
         if (collision.tag == "Player")

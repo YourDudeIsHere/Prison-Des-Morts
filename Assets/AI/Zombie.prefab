@@ -155,7 +155,6 @@ GameObject:
   - component: {fileID: 2087543323639837195}
   - component: {fileID: 6072291239340376017}
   - component: {fileID: 406821541473363873}
-  - component: {fileID: 5702313540686588631}
   - component: {fileID: 5156356468716438503}
   - component: {fileID: 1146008196873913137}
   m_Layer: 0
@@ -173,7 +172,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7369317674577326059}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -4.53, y: -0.501, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -246,29 +245,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 28482f23648468b4e90873b7f04c7018, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  player: {fileID: 0}
-  speed: 8
-  IsGrabbed: 0
+  visionRange: 15
+  AIhealth: 10
+  player: {fileID: 4720235435182414585, guid: 2e0e3ca6f83869542902dee419618dec, type: 3}
+  uiManager: {fileID: 0}
+  speed: 4
+  IsGrabbing: 0
   grabCooldown: 10
-  playerScript: {fileID: 0}
+  playerScript: {fileID: 1805448789854943740, guid: 2e0e3ca6f83869542902dee419618dec, type: 3}
   healthVignette: {fileID: 0}
   canMove: 1
---- !u!114 &5702313540686588631
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7369317674577326059}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9c50968044acfa042aa893e61ea66058, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  panel: {fileID: 0}
-  ai: {fileID: 406821541473363873}
-  grabButton: {fileID: 0}
-  grabScore: 0
 --- !u!61 &5156356468716438503
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -340,7 +326,7 @@ Rigidbody2D:
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
-  m_Constraints: 0
+  m_Constraints: 4
 --- !u!1 &8232421390721732496
 GameObject:
   m_ObjectHideFlags: 0
